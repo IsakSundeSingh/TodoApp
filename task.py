@@ -25,3 +25,16 @@ class Task:
 
     def uncomplete(self):
         self.completed = False
+
+    @classmethod
+    def from_dict(cls, dictionary):
+        self = cls.__new__(cls)
+        default = {"id": -1, "completed": False, "text": "Invalid"}
+        self.__dict__ = {**default, **dictionary.copy()}
+        return self
+
+    def to_dict(self):
+        return self.__dict__
+
+    def __eq__(self, other):
+        return self.to_dict() == other.to_dict()

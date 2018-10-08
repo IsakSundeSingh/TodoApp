@@ -1,5 +1,6 @@
 import unittest
 from task import Task
+from json import loads
 
 
 class TestTask(unittest.TestCase):
@@ -41,6 +42,16 @@ class TestTask(unittest.TestCase):
 
         task.uncomplete()
         self.assertFalse(task.completed)
+
+    def test_can_be_constructed_from_dict(self):
+        data = {"id": 14, "text": "Well hello there", "completed": False}
+        expected = Task(data["text"])
+        expected.id = data["id"]
+        expected.completed = data["completed"]
+
+        task = Task.from_dict(data)
+
+        self.assertEqual(task, expected)
 
 
 if __name__ == "__main__":
