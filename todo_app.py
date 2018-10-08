@@ -1,4 +1,4 @@
-from task import Task
+from task import Task, count_from
 from json import dump, load
 from pathlib import Path
 
@@ -12,11 +12,11 @@ except ModuleNotFoundError:
 
 def show_usage(*args):
     print("""Usage:
-        Add <text>  - Add a new tasks
-        Print       - Show all tasks
-        Do #        - Complete a task
-        Undo #      - Undo a completed task
-        Quit        - Quit the application
+    Add <text>  - Add a new tasks
+    Print       - Show all tasks
+    Do #        - Complete a task
+    Undo #      - Undo a completed task
+    Quit        - Quit the application
     """)
 
 
@@ -29,6 +29,10 @@ def init_tasks():
 
     with open(task_file, "r") as f:
         data = load(f)
+        # Ensure new tasks get a unique id
+        highest_id = max(data, key=lambda x: x["id"])["id"]
+        Task.id_generator = count_from(highest_id + 1)
+
         return {task["id"]: Task.from_dict(task) for task in data}
 
 
