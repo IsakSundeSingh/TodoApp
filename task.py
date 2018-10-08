@@ -1,4 +1,3 @@
-
 def count(n):
     while True:
         yield n
@@ -18,6 +17,10 @@ class Task:
         self.completed = False
 
     def __str__(self):
+        if self.completed:
+            text = '\u0336' + '\u0336'.join(self.text)
+            return f"#{self.id} {text}"
+
         return f"#{self.id} {self.text}"
 
     def complete(self):

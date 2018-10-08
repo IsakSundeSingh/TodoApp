@@ -1,6 +1,5 @@
 import unittest
 from task import Task
-from json import loads
 
 
 class TestTask(unittest.TestCase):
