@@ -1,5 +1,5 @@
 from task import Task
-from persister import Persister
+from persister import DiskPersister
 from pathlib import Path
 
 # If imported input implicitly uses it and provides features from it
@@ -15,14 +15,18 @@ class Application:
         self.persister = persister
         self.inputter = inputter
         self.outputter = outputter
-        self.tasks = self.persister.init_tasks()
+        self.tasks = self.persister.load()
         self.commands = {
             'add': self.add_task,
             'do': self.do_task,
             'undo': self.undo_task,
-            'print': lambda *args: [self.outputter(task) for task in (self.tasks.values() or ["No tasks"])],
-            'quit': lambda x: quit()
+            'print': lambda *args: [self.outputter(str(task)) for task in (self.tasks.values() or ["No tasks"])],
+            'quit': lambda x: self.quit()
         }
+        self.done = False
+
+    def quit(self):
+        self.done = True
 
     def show_usage(self, *args):
         self.outputter("""Usage:
@@ -35,27 +39,35 @@ class Application:
     def add_task(self, text):
         task = Task(" ".join(text))
         self.tasks[task.id] = task
-        self.persister.persist(self.tasks)
-        self.outputter(task)
+        self.persister.store(self.tasks)
+        self.outputter(str(task))
 
     def do_task(self, numbers):
+        if not all(x.isdigit() for x in numbers):
+            self.outputter("Value must be a number")
+            return
+
         for num in numbers:
             task = self.tasks[int(num)]
             self.outputter(f"Completed {task}")
             task.complete()
 
-        self.persister.persist(self.tasks)
+        self.persister.store(self.tasks)
 
     def undo_task(self, numbers):
+        if not all(x.isdigit() for x in numbers):
+            self.outputter("Value must be a number")
+            return
+
         for num in numbers:
             task = self.tasks[int(num)]
             task.uncomplete()
-            self.outputter(f"Undid task {task}")
+            self.outputter(f"Undid {task}")
 
-        self.persister.persist(self.tasks)
+        self.persister.store(self.tasks)
 
     def run(self):
-        while True:
+        while not self.done:
             command = self.inputter("> ")
             if not command:
                 self.show_usage()
@@ -68,4 +80,4 @@ class Application:
 
 if __name__ == "__main__":
     task_file = Path("tasks.json")
-    Application(Persister(task_file), input, print).run()
+    Application(DiskPersister(task_file), input, print).run()

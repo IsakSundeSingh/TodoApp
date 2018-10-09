@@ -1,8 +1,8 @@
-import unittest
+from unittest import main, TestCase
 from task import Task
 
 
-class TestTask(unittest.TestCase):
+class TestTask(TestCase):
     def test_task_has_id(self):
         task = Task("Some data")
         self.assertGreaterEqual(task.id, 1)
@@ -54,4 +54,4 @@ class TestTask(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    main()

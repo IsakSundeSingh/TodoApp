@@ -3,10 +3,18 @@ from json import load, dump
 
 
 class Persister:
+    def load(self):
+        raise NotImplementedError()
+
+    def store(self, data):
+        raise NotImplementedError()
+
+
+class DiskPersister(Persister):
     def __init__(self, path):
         self.path = path
 
-    def init_tasks(self):
+    def load(self):
         if not self.path.exists():
             return dict()
 
@@ -18,7 +26,7 @@ class Persister:
 
             return {task["id"]: Task.from_dict(task) for task in data}
 
-    def persist(self, tasks):
+    def store(self, tasks):
         """Persists all tasks to a file"""
 
         with open(self.path, "w") as f:
