@@ -1,11 +1,8 @@
-def count_from(n):
-    while True:
-        yield n
-        n += 1
+from itertools import count
 
 
 class Task:
-    id_generator = count_from(1)
+    id_generator = count(1)
 
     def __init__(self, text):
         if not text or not isinstance(text, str):
