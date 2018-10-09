@@ -73,6 +73,15 @@ class TestApplication(TestCase):
         self.assertRegex(self.outputs[1], f"Undid #1 {task.text}")
         self.assertEqual(expected, self.persister.stored[1])
 
+    def test_cannot_add_empty_task(self):
+        expected = "Cannot add empty task"
+        self.inputs = ["add"]
+        app = Application(self.persister, self.inputter, self.outputter)
+
+        app.run()
+
+        self.assertEqual(expected, self.outputs[0])
+
 
 if __name__ == "__main__":
     main()

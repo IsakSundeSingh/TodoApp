@@ -37,6 +37,10 @@ class Application:
     Quit        - Quit the application""")
 
     def add_task(self, text):
+        if not text:
+            self.outputter("Cannot add empty task")
+            return
+
         task = Task(" ".join(text))
         self.tasks[task.id] = task
         self.persister.store(self.tasks)
