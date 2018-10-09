@@ -58,7 +58,7 @@ class TestApplication(TestCase):
 
         app.run()
 
-        self.assertRegex(self.outputs[0], f"Completed #1 {task.text}")
+        self.assertEqual(f"Completed #1 {task.text}", self.outputs[0])
         self.assertEqual(expected, self.persister.stored[0])
 
     def test_can_undo_tasks(self):
@@ -70,7 +70,7 @@ class TestApplication(TestCase):
 
         app.run()
 
-        self.assertRegex(self.outputs[1], f"Undid #1 {task.text}")
+        self.assertEqual(f"Undid #1 {task.text}", self.outputs[1])
         self.assertEqual(expected, self.persister.stored[1])
 
     def test_cannot_add_empty_task(self):
@@ -81,6 +81,22 @@ class TestApplication(TestCase):
         app.run()
 
         self.assertEqual(expected, self.outputs[0])
+
+    def test_can_do_and_undo_with_and_without_hashtag(self):
+        expected = [
+            "Completed #1 Test stuff",
+            "Undid #1 Test stuff",
+            "Completed #1 Test stuff",
+            "Undid #1 Test stuff"
+        ]
+        task = Task.from_dict({"id": 1, "text": "Test stuff", "completed": False})
+        self.data.update({task.id: task})
+        self.inputs = ["do 1", "undo #1", "do #1", "undo 1"]
+        app = Application(self.persister, self.inputter, self.outputter)
+
+        app.run()
+
+        self.assertEqual(expected, self.outputs)
 
 
 if __name__ == "__main__":

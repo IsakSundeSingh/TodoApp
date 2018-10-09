@@ -47,24 +47,24 @@ class Application:
         self.outputter(str(task))
 
     def do_task(self, numbers):
-        if not all(x.isdigit() for x in numbers):
+        if not all(x.strip('#').isdigit() for x in numbers):
             self.outputter("Value must be a number")
             return
 
         for num in numbers:
-            task = self.tasks[int(num)]
+            task = self.tasks[int(num.strip('#'))]
             self.outputter(f"Completed {task}")
             task.complete()
 
         self.persister.store(self.tasks)
 
     def undo_task(self, numbers):
-        if not all(x.isdigit() for x in numbers):
+        if not all(x.strip('#').isdigit() for x in numbers):
             self.outputter("Value must be a number")
             return
 
         for num in numbers:
-            task = self.tasks[int(num)]
+            task = self.tasks[int(num.strip('#'))]
             task.uncomplete()
             self.outputter(f"Undid {task}")
 
